@@ -118,10 +118,12 @@
     <ClCompile Include="ascArt.cpp" />
     <ClCompile Include="hanginDict.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="saveState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ascArt.h" />
     <ClInclude Include="hanginDict.h" />
+    <ClInclude Include="saveState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -24,12 +24,18 @@
     <ClCompile Include="hanginDict.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="saveState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ascArt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hanginDict.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
