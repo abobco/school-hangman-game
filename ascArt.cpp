@@ -2,17 +2,10 @@
 
 ascArt::ascArt()
 {
-	iFile.open("TitleArt.txt");
-	string line;
-	while (iFile)
-	{
-		getline(iFile, line);
-		line += '\n';
-		mainTitle += line;
-	}
-	iFile.close();
 
-	iFile.open("hangArt.txt");
+	string line;
+
+	iFile.open("asciiArt/hangArt.txt");
 	for(int j = 0; j < 7; j++)
 	{
 		string temp;
@@ -26,23 +19,29 @@ ascArt::ascArt()
 	}
 	iFile.close();
 
-	iFile.open("loseArt.txt");
-	while (iFile)
-	{
-		getline(iFile, line);
-		line += '\n';
-		failscreen += line;
-	}
-	iFile.close();
 
-	iFile.open("victory.txt");
+
+	mainTitle = loadArt("asciiArt/TitleArt.txt");
+	failscreen = loadArt("asciiArt/loseArt.txt");
+	victoryMED = loadArt("asciiArt/victory.txt");
+	victoryEASY = loadArt("asciiArt/victoryEASY.txt");
+	victoryHARD = loadArt("asciiArt/victoryHARD3.txt");
+
+}
+
+string ascArt::loadArt(string filename)
+{
+	string line;
+	string output;
+	iFile.open(filename);
 	while (iFile)
 	{
 		getline(iFile, line);
 		line += '\n';
-		victoryscreen += line;
+		output += line;
 	}
 	iFile.close();
+	return output;
 }
 
 void ascArt::printTitle()
@@ -63,8 +62,22 @@ void ascArt::printFail()
 	cout << failscreen;
 }
 
-void ascArt::printVictory()
+void ascArt::printVictory(int difficulty)
 {
 	system("CLS");
-	cout << victoryscreen;
+	switch (difficulty)
+	{
+	case 1:
+		cout << victoryEASY;
+		break;
+	case 2:
+		cout << victoryMED;
+		break;
+	case 3:
+		cout << victoryHARD;
+		break;
+	default:
+		cout << "How did you get here?";
+		break;
+	}
 }

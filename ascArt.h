@@ -15,10 +15,15 @@ private:
 	vector<string> hangState;
 	string mainTitle;
 	string failscreen;
-	string victoryscreen;
+	string victoryMED;
+	string victoryEASY;
+	string victoryHARD;
 
 	//file io
 	ifstream iFile;
+
+private:
+	string loadArt(string filename);
 
 public:
 	ascArt();
@@ -31,7 +36,7 @@ public:
 
 	void printFail();
 
-	void printVictory();
+	void printVictory(int difficulty);
 
 };
 #endif

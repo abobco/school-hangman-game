@@ -1,6 +1,8 @@
 #include <iostream>
 #include "hanginDict.h"
 #include "ascArt.h"
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
@@ -11,6 +13,7 @@ int main()
 	string chosenWord;
 	string displayWord;
 	string guessedLetters;
+	vector<string> guessedWords;
 
 	ascArt allArt;
 	hanginDict dict;
@@ -22,6 +25,7 @@ int main()
 	bool inMenu = true;
 	bool victory = false;
 	bool exit = false;
+	bool alreadyguessed = false;
 
 	while (!exit)
 	{
@@ -29,6 +33,7 @@ int main()
 		{
 			displayWord = "";
 			guessedLetters = "";
+			guessedWords.clear();
 			allArt.printTitle();
 			cout << Qinput;
 			cin >> input;
@@ -52,7 +57,7 @@ int main()
 				{
 					Qinput = "Guess a letter or word:\n";
 					chosenWord = dict.selectWord(difficulty);
-					wordsize = chosenWord.size();
+					wordsize = int(chosenWord.size());
 					for (int i = 0; i < wordsize; i++)
 					{
 						displayWord += '_';
@@ -74,6 +79,11 @@ int main()
 			}
 
 			//	ask for input
+			cout << "\nGuessed Words: ";
+			for (int i = 0; i < int(guessedWords.size()); i++)
+			{
+				cout << guessedWords[i] << ' ';
+			}
 			cout << '\n' << "Guessed Letters: " << guessedLetters << '\n' << Qinput;
 			cin >> input;
 
@@ -82,78 +92,134 @@ int main()
 			// 1 letter guess case
 			if (input.size() == 1)
 			{
-				guessedLetters += toupper(input[0]); +' ';
-				//check each letter
-				for (int i = 0; i < wordsize; i++)
+				alreadyguessed = false;
+				for (unsigned int i = 0; i < guessedLetters.size(); i++)
 				{
-					if (input[0] == chosenWord[i] || input[0] == toupper(chosenWord[i]))
+					if (guessedLetters[i] == toupper(input[0]))
+						alreadyguessed = true;
+				}
+				if (!alreadyguessed)
+				{
+					guessedLetters += toupper(input[0]); +' ';
+					//check each letter
+					for (int i = 0; i < wordsize; i++)
 					{
-						guessflag = true;
-						displayWord[i] = toupper(input[0]);
+						if (input[0] == chosenWord[i] || input[0] == toupper(chosenWord[i]))
+						{
+							guessflag = true;
+							displayWord[i] = toupper(input[0]);
+						}
 					}
 				}
 			}
 
 			// full word guess case
-			else if (input.size() == wordsize)
+			else if (int(input.size()) == wordsize)
 			{
-				victory = true;
 
 				// convert input to lowercase for comparison
 				for (int i = 0; i < wordsize; i++)
 				{
 					input[i] = tolower(input[i]);
 				}
-				// check each letter
-				for (int i = 0; i < wordsize; i++)
+
+				bool wordAlreadyGuessed = false;
+
+				for (int i = 0; i < int(guessedWords.size()); i++)
 				{
-					if (input[i] != chosenWord[i])
+					wordAlreadyGuessed = true;
+					for (int j = 0; j < wordsize; j++)
 					{
-						victory = false;
+						if (input[j] != guessedWords[i][j])
+						{
+							wordAlreadyGuessed = false;
+							break;
+						}
+					}
+					if (wordAlreadyGuessed)
+					{
+						alreadyguessed = true;
+						break;
+					}
+				}
+				if (!wordAlreadyGuessed)
+				{
+					guessedWords.push_back(input);
+
+					victory = true;
+					guessflag = true;
+
+
+					// check each letter
+					for (int i = 0; i < wordsize; i++)
+					{
+						if (input[i] != chosenWord[i])
+						{
+							victory = false;
+							guessflag = false;
+						}
 					}
 				}
 			}
 			else
 				Qinput = "Invalid input\nGuess a letter or word:\n";
-
-			if (!guessflag && hangstate < 7)
-				hangstate++;
-			if (hangstate == 6)
+			if (!alreadyguessed)
 			{
-				inMenu = true;
-				hangstate = 0;
-				allArt.printFail();
-				cout << "Press any key to return to menu\n";
-				cin >> input;
-				Qinput = "Select difficulty(1 - 3) or type 'X' to exit:\n";
-			}
-			
-			//check for victory
-
-			string compWord;
-			victory = true;
-			for (int i = 0; i < wordsize; i++)
-			{
-				compWord += toupper(chosenWord[i]);
-			}
-			for (int i = 0; i < wordsize; i++)
-			{
-				if (compWord[i] != displayWord[i])
+				if (!guessflag && hangstate < 7)
+					hangstate++;
+				if (hangstate == 6)
 				{
+					inMenu = true;
+
+
+					allArt.printHangman(hangstate);
+
+					for (int i = 0; i < wordsize; i++)
+						cout << char(toupper(chosenWord[i])) << ' ';
+					cout << "\nPress any key to continue:\n";
+					cin >> input;
+					allArt.printFail();
+					cout << "Press any key to return to menu\n";
+					cin >> input;
+					Qinput = "Select difficulty(1 - 3) or type 'X' to exit:\n";
+					hangstate = 0;
+				}
+
+				//check for victory
+
+				if (!victory)
+				{
+					string compWord;
+					victory = true;
+					for (int i = 0; i < wordsize; i++)
+					{
+						compWord += toupper(chosenWord[i]);
+					}
+					for (int i = 0; i < wordsize; i++)
+					{
+						if (compWord[i] != displayWord[i])
+						{
+							victory = false;
+							break;
+						}
+					}
+				}
+				if (victory == true)
+				{
+					inMenu = true;
+					allArt.printHangman(hangstate);
+					for (int i = 0; i < wordsize; i++)
+						cout << char(toupper(chosenWord[i])) << ' ';
+					cout << "\nPress any key to continue:\n";
+					cin >> input;
+					hangstate = 0;
+					allArt.printVictory(difficulty);
+					cout << "Press any key to return to menu\n";
+					cin >> input;
+					Qinput = "Select difficulty(1 - 3) or type 'X' to exit:\n";
 					victory = false;
-					break;
 				}
 			}
-			if (victory == true)
-			{
-				inMenu = true;
-				hangstate = 0;
-				allArt.printVictory();
-				cout << "Press any key to return to menu\n";
-				cin >> input;
-				Qinput = "Select difficulty(1 - 3) or type 'X' to exit:\n";
-			}
-
 		}
 	}
 }
